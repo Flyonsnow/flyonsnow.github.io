@@ -1,12 +1,12 @@
 # Site settings
-name: 记事本
+name: FlySnow的博客
 email: 389528688@qq.com
-author: Freud Kang
+author: FlySnow
 url: https://flyonsnow.github.io/
 resume_site: https://flyonsnow.github.io/
 github: https://github.com/luoyan35714/
 baseurl: ""
-description: 描述信息
+description: 每天记录一点
 meta_description: meta描述
 motto: motto
 banner: banner
