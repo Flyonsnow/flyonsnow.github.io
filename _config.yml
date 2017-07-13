@@ -27,11 +27,11 @@ baidu_analysis: 65640a36324eb9144666384b7b1bdfb7
 
 FB:
   comments :
-    provider : yungentie
+    provider : provider
     duoshuo:
-        short_name : luoyan35714
+        short_name : flysnow
     disqus :
-        short_name : freudkang
+        short_name : flysnowd
     # facebook :
     #   appid : 123
     #   num_posts: 5
