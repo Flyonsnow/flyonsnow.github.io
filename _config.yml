@@ -17,13 +17,13 @@ paginate: 10
 
 exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
 
-github_username: luoyan35714
-highlighter: Pygments
+github_username: flyonsnow
+rouge: Pygments
 
 # Build settings
 markdown: kramdown
 
-baidu_analysis: 94be4b0f9fc5d94cc0d0415ea6761ae9
+baidu_analysis: 65640a36324eb9144666384b7b1bdfb7
 
 FB:
   comments :
