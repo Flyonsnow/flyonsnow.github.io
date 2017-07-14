@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 为什么想要开始写博客
-categories: default
+categories: Java
 date: 2017-07-14 11:45:00
 pid: 20160824-123811
 pin: 100
