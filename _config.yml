@@ -18,7 +18,7 @@ postfile: "/db/Postfile" # the Database
 sitefile: "/db/Sitefile" # the Database
 
 # pagination
-page_size: 3
+page_size: 5
 
 # comment settings
 duoshuo_short_name: "sbys" # the user of user.domain.com
