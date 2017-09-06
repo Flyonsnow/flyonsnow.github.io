@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 在Centos7上安装GitLab
-categories: version control
+categories: VersionControl
 date: 2017-08-16 15:57:00
 pid: 20160824-123811
 pin: 100
