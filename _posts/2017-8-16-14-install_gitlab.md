@@ -242,6 +242,31 @@ postgresql96-contrib:常用的组件和方法 </br>
 随后跳转登录,用户名为root
 
 
+#### 使用非集成的Nginx
+
+在Nginx中添加如下配置
+
+    server{
+        listen 8083;
+        server_name gitlab.example.com;
+    
+        location / {
+            # 这个大小的设置非常重要，如果 git 版本库里面有大文件，设置的太小，文件push 会失败，根据情况调整
+            client_max_body_size 50m;
+    
+            proxy_redirect off;
+            #以下确保 gitlab中项目的 url 是域名而不是 http://git，不可缺少
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            # 反向代理到 gitlab 内置的 nginx
+            proxy_pass http://127.0.0.1:8088;
+            index index.html index.htm;
+        }
+    }
+
+
+
 #### 参考文献
 
 http://www.cnblogs.com/wintersun/p/3930900.html
