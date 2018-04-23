@@ -160,23 +160,25 @@ postgresql96-contrib:常用的组件和方法 </br>
     
 6.安装Gitlab
 
-①.如果你想使用 Postfix 发送邮件，请在安装过程中根据提示选择 'Internet Site'。 你也可以用 Sendmail 或者 配置一个自定义的 SMTP 服务 并 把它作为一个 SMTP 服务器。
+①.在 CentOS 系统上，下面的命令将会打开系统防火墙 HTTP 和 SSH 的访问。
 
-在 CentOS 系统上，下面的命令将会打开系统防火墙 HTTP 和 SSH 的访问。
-
-    sudo yum install curl policycoreutils openssh-server openssh-clients
+    sudo yum install -y curl policycoreutils-python openssh-server
     sudo systemctl enable sshd
     sudo systemctl start sshd
-    sudo yum install postfix
-    sudo systemctl enable postfix
-    sudo systemctl start postfix
     sudo firewall-cmd --permanent --add-service=http
     sudo systemctl reload firewalld
     
-②.添加 GitLab 镜像源并安装
+   安装 Postfix 发送通知邮件, 如果想使用其他邮件系统可跳过此步骤(Sendmail 或者 配置一个自定义的 SMTP 服务,https://docs.gitlab.com/omnibus/settings/smtp.html)
+    
+    sudo yum install postfix
+    sudo systemctl enable postfix
+    sudo systemctl start postfix
+    
+②.添加 GitLab 镜像源并安装,EXTERNAL_URL 为gitlab的访问域名
 
-    [root@centos ~]# curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
-    [root@centos ~]# sudo yum install -y gitlab-ce
+    [root@centos ~]# curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+    [root@centos ~]# sudo EXTERNAL_URL="http://gitlab.example.com" yum install -y gitlab-ee
+
     #修改配置
     [root@centos ~]# vim /etc/gitlab/gitlab.rb
    
