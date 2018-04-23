@@ -158,6 +158,67 @@ postgresql96-contrib:常用的组件和方法 </br>
 
     [root@centos ~]# yum -y install git
     
+6.安装Redis
+
+①.到redis官网下载最新稳定版(https://redis.io),
+    
+    yum install gcc tcl -y
+    curl -O http://download.redis.io/releases/redis-4.0.9.tar.gz
+    tar -zxvf redis-4.0.9.tar.gz
+    cd redis-4.0.9
+    make
+    mkdir /usr/local/redis
+    # 进入src目录安装
+    cd src && make PREFIX=/usr/local/redis install
+    
+②. 添加全局配置
+    
+    vim ~/.bash_profile
+    
+    REDIS_HOME=/usr/local/redis
+    PATH=$PATH:$REDIS_HOME:/bin
+    export PATH REDIS_HOME
+    
+    source ~/.bash_profile
+    
+    #测试
+    redis-server --help
+
+③.添加后台daemon
+    
+    cd ~/redis-4.0.9/utils
+    ./install_server.sh
+    # 默认配置
+    Config file    : /etc/redis/6379.conf
+    Log file       : /var/log/redis_6379.log
+    Data dir       : /var/lib/redis/6379
+    Executable     : /usr/local/redis/bin/redis-server
+    Cli Executable : /usr/local/redis/bin/redis-cli
+    
+    默认redis 服务名称为redis_6379(可以在cd /etc/init.d内查看或更改)
+若想更改为redisd作为服务名
+    
+    cd /etc/init.d
+    mv redis_6379 redisd
+    chkconfig --add redisd
+    
+④. 启动
+
+    systemctl status redis_6379.service
+    ss -tanl
+
+⑤. 远程访问及ip限制
+
+    vim /etc/redis/6379.conf
+    
+    #protected-mode yes改为
+    protected-mode no
+    
+    # 注释掉, 如下
+    #bind 127.0.0.1
+    
+限制ip访问需要之后在研究下，并不是填上要访问的ip就是允许此ip访问，应该是填上可以访问的本机网卡ip
+    
 6.安装Gitlab
 
 ①.在 CentOS 系统上，下面的命令将会打开系统防火墙 HTTP 和 SSH 的访问。
@@ -188,7 +249,7 @@ postgresql96-contrib:常用的组件和方法 </br>
     #13 项目中显示的gitlab地址
     external_url 'http://gitlab.example.com'
 
-    #363 使用非集成的postgresql
+    #401 使用非集成的postgresql
     gitlab_rails['db_adapter'] = "postgresql"
     gitlab_rails['db_encoding'] = "utf8"
     #gitlab_rails['db_encoding'] = "unicode
@@ -200,26 +261,26 @@ postgresql96-contrib:常用的组件和方法 </br>
     gitlab_rails['db_host'] = '127.0.0.1'
     gitlab_rails['db_port'] = '5432'
     
-    #384 使用非集成的redis
+    #423 使用非集成的redis
     gitlab_rails['redis_host'] = "127.0.0.1"
     gitlab_rails['redis_port'] = 6379
     gitlab_rails['redis_password'] = "123456"
     gitlab_rails['redis_database'] = 1
     
-    #561 设置unicorn监听端口
+    #613 设置unicorn监听端口
     unicorn['listen'] = '127.0.0.1'
     unicorn['port'] = 8087
     
-    #619 是否使用集成postgresql
+    #676 是否使用集成postgresql
     postgresql['enable'] = false
     
-    #721 是否使用集成redis
+    #799 是否使用集成redis
     redis['enable'] = false
     
     #788 是否使用集成nginx,即使本地安装了Nginx也建议打开集成的nginx
     nginx['enable'] = true
     
-    #827 集成的Nginx监听的端口,若要本地和集成的Nginx同时使用,则更改监听端口
+    #879 集成的Nginx监听的端口,若要本地和集成的Nginx同时使用,则更改监听端口
     nginx['listen_port'] = 80
     #nginx['listen_port'] = 8088
 
