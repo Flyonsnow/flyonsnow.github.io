@@ -89,7 +89,10 @@ Ruby安装有四种方式:
         export PATH=$PATH:$POSTGRESQL/bin:$PGDATA:$LD_LIBRARY_PATH
     [root@centos ~]# source ~/.bash_profile
     [root@centos ~]# systemctl enable postgresql-9.6
-    
+
+初始化
+  
+    [root@centos ~]# /usr/pgsql-9.6/bin/postgresql96-setup initdb  
   
 设置密码登录
 
@@ -98,9 +101,7 @@ Ruby安装有四种方式:
         #改为
         #host    all             all             127.0.0.1/32            md5
     
-初始化
 
-    [root@centos ~]# /usr/pgsql-9.6/bin/postgresql96-setup initdb
 
 
 启动
