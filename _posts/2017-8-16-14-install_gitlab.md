@@ -237,8 +237,21 @@ postgresql96-contrib:常用的组件和方法 </br>
     
 ②.添加 GitLab 镜像源并安装,EXTERNAL_URL 为gitlab的访问域名
 
-    [root@centos ~]# curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
-    [root@centos ~]# sudo EXTERNAL_URL="http://gitlab.example.com" yum install -y gitlab-ee
+    # 这是官方的yum源，安装速度会比较慢
+    [root@centos ~]# curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+    # 可以使用国内源，修改如下文件即可：
+    vim /etc/yum.repos.d/gitlab_gitlab-ce.repo
+    
+    [gitlab-ce]
+    name=gitlab-ce
+    baseurl=http://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7
+    repo_gpgcheck=0
+    gpgcheck=0
+    enabled=1
+    gpgkey=https://packages.gitlab.com/gpg.key
+    
+    #然后执行：
+    [root@centos ~]# sudo EXTERNAL_URL="http://gitlab.example.com" yum install -y gitlab-ce
 
     #修改配置
     [root@centos ~]# vim /etc/gitlab/gitlab.rb
