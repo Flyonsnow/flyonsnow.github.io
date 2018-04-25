@@ -290,7 +290,7 @@ postgresql96-contrib:常用的组件和方法 </br>
     #799 是否使用集成redis
     redis['enable'] = false
     
-    #788 是否使用集成nginx,即使本地安装了Nginx也建议打开集成的nginx
+    #878 是否使用集成nginx,即使本地安装了Nginx也建议打开集成的nginx
     nginx['enable'] = true
     
     #879 集成的Nginx监听的端口,若要本地和集成的Nginx同时使用,则更改监听端口
