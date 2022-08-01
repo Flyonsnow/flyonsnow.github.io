@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"flyonsnow.wenxuezheng.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="GitLab是利用 Ruby on Rails 的一个开源的版本管理系统，实现一个自托管的Git项目仓库，可通过Web界面进行访问公开的或者私人项目。它拥有与Github类似的功能，能够浏览源代码，管理缺陷和注释。可以管理团队对仓库的访问，它非常易于浏览提交过的版本并提供一个文件历史库。团队成员可以利用内置的简单聊天程序(Wall)进行交流。它还提供一个代码片段收集功能可以轻松实现代码复用，便于日">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Centos7上安装GitLab">
+<meta property="og:url" content="https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/index.html">
+<meta property="og:site_name" content="世纪狂想">
+<meta property="og:description" content="GitLab是利用 Ruby on Rails 的一个开源的版本管理系统，实现一个自托管的Git项目仓库，可通过Web界面进行访问公开的或者私人项目。它拥有与Github类似的功能，能够浏览源代码，管理缺陷和注释。可以管理团队对仓库的访问，它非常易于浏览提交过的版本并提供一个文件历史库。团队成员可以利用内置的简单聊天程序(Wall)进行交流。它还提供一个代码片段收集功能可以轻松实现代码复用，便于日">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/gitlab_change_pwd.png">
+<meta property="article:published_time" content="2017-08-16T07:57:00.000Z">
+<meta property="article:modified_time" content="2022-08-01T09:00:19.854Z">
+<meta property="article:author" content="flyonsnow">
+<meta property="article:tag" content="version control">
+<meta property="article:tag" content="devops">
+<meta property="article:tag" content="gitlab">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/gitlab_change_pwd.png">
+
+<link rel="canonical" href="https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>在Centos7上安装GitLab | 世纪狂想</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">世纪狂想</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my-avatar.jpg">
+      <meta itemprop="name" content="flyonsnow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="世纪狂想">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在Centos7上安装GitLab
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-08-16 15:57:00" itemprop="dateCreated datePublished" datetime="2017-08-16T15:57:00+08:00">2017-08-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-01 17:00:19" itemprop="dateModified" datetime="2022-08-01T17:00:19+08:00">2022-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/devops/" itemprop="url" rel="index"><span itemprop="name">devops</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/devops/tool/" itemprop="url" rel="index"><span itemprop="name">tool</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>7.5k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>7 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>GitLab是利用 Ruby on Rails 的一个开源的版本管理系统，实现一个自托管的Git项目仓库，可通过Web界面进行访问公开的或者私人项目。它拥有与Github类似的功能，能够浏览源代码，管理缺陷和注释。可以管理团队对仓库的访问，它非常易于浏览提交过的版本并提供一个文件历史库。团队成员可以利用内置的简单聊天程序(Wall)进行交流。它还提供一个代码片段收集功能可以轻松实现代码复用，便于日后有需要的时候进行查找</p>
+<span id="more"></span>
+
+<h3 id="配置要求"><a href="#配置要求" class="headerlink" title="配置要求"></a>配置要求</h3><p>RAM 4G+</p>
+<h3 id="依赖组件"><a href="#依赖组件" class="headerlink" title="依赖组件"></a>依赖组件</h3><p>根据官方文档说明有以下依赖，但实际中发现部分无需安装也可以.</p>
+<ol>
+<li>Packages &#x2F; Dependencies</li>
+<li>Ruby</li>
+<li>Go</li>
+<li>Node</li>
+<li>System Users</li>
+<li>database</li>
+<li>Redis</li>
+<li>GitLab</li>
+<li>Nginx</li>
+<li>Git(2.8.4 or higher)</li>
+</ol>
+<h3 id="安装方式"><a href="#安装方式" class="headerlink" title="安装方式"></a>安装方式</h3><p>安装方式有两种:Omnibus包安装和编译安装。</p>
+<h4 id="一、Omnibus包安装（安装起来更快、更容易升级版本，而且包含了其他安装方式所没有的可靠性功能）"><a href="#一、Omnibus包安装（安装起来更快、更容易升级版本，而且包含了其他安装方式所没有的可靠性功能）" class="headerlink" title="一、Omnibus包安装（安装起来更快、更容易升级版本，而且包含了其他安装方式所没有的可靠性功能）"></a>一、Omnibus包安装（安装起来更快、更容易升级版本，而且包含了其他安装方式所没有的可靠性功能）</h4><p>1.安装Packages &#x2F; Dependencies</p>
+<pre><code>[root@centos ~]# yum -y update
+</code></pre>
+<p>2.安装Ruby</p>
+<p>Ruby安装有四种方式:</p>
+<ul>
+<li>系统包管理工具(yum、apg-get等),简单快速,但是一般不是最新的版本</li>
+<li>安装工具</li>
+<li>第三方管理工具,RVM等</li>
+<li>编译方式</li>
+</ul>
+<p>因为我要安装ruby2.4,yum库中只能安装ruby2.0,所以我选择了编译安装</p>
+<pre><code>[root@centos ~]# ruby -v
+bash: ruby: command not found...
+[root@centos ~]# curl -O https://cache.ruby-lang.org/pub/ruby/2.4/ruby-2.4.1.tar.gz
+[root@centos ~]# tar -zxvf ruby-2.4.1.tar.gz
+[root@centos ~]# cd ruby-2.4.1/
+[root@centos ~]# ./configure
+[root@centos ~]# make &amp;&amp; make install
+</code></pre>
+<p>添加环境变量</p>
+<pre><code>[root@centos ~]# vim ~/.bash_profile
+    RUBY_ROOT=/usr/local/lib/ruby
+    RUBY=$RUBY_ROOT/2.4.0
+    GEM=$RUBY_ROOT/gem
+    export PATH=$PATH:$RUBY:$GEM
+[root@centos ~]# source ~/.bash_profile
+[root@centos ~]# ruby -v
+ ruby 2.4.1p111 (2017-03-22 revision 58053) [x86_64-linux]
+[root@centos ~]# gem --version
+ 2.6.11
+</code></pre>
+<p>​<br>3.System Users<br><br />添加gitlab用户<br>​<br>[root@centos ~]# adduser –system –shell &#x2F;bin&#x2F;bash –comment ‘GitLab’ –create-home –home-dir &#x2F;home&#x2F;gitlab gitlab</p>
+<p>4.安装PostgreSQL</p>
+<pre><code>[root@centos ~]# yum install -y https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+[root@centos ~]# yum install -y postgresql96 postgresql96-server postgresql96-contrib 
+[root@centos ~]# vim ~/.bash_profile
+    POSTGRESQL=/usr/pgsql-9.6
+    LD_LIBRARY_PATH=$POSTGRESQL/lib
+    PGDATA=/var/lib/pgsql/9.6/data
+    export PATH=$PATH:$POSTGRESQL/bin:$PGDATA:$LD_LIBRARY_PATH
+[root@centos ~]# source ~/.bash_profile
+[root@centos ~]# systemctl enable postgresql-9.6
+</code></pre>
+<p>初始化</p>
+<pre><code>[root@centos ~]# /usr/pgsql-9.6/bin/postgresql96-setup initdb  
+</code></pre>
+<p>设置密码登录</p>
+<pre><code>[root@centos ~]# vim /var/lib/pgsql/9.6/data/pg_hba.conf
+    #host    all             all             127.0.0.1/32            ident
+    #改为
+    #host    all             all             127.0.0.1/32            md5
+</code></pre>
+<p>启动</p>
+<pre><code>[root@centos ~]# systemctl start postgresql-9.6
+</code></pre>
+<p>启动服务:</p>
+<pre><code>[root@centos ~]# systemctl start postgresql-9.6
+</code></pre>
+<p>重启服务</p>
+<pre><code>[root@centos ~]# systemctl restart postgresql-9.6
+</code></pre>
+<p>停止服务</p>
+<pre><code>[root@centos ~]# systemctl stop postgresql-9.6
+</code></pre>
+<p>自动启动</p>
+<pre><code>[root@centos ~]# systemctl enable postgresql-9.6
+</code></pre>
+<p>postgresql96:客户端 </br><br>ostgresql96-server:服务端 </br><br>postgresql96-contrib:常用的组件和方法 </br><br>切换至postgres用户</p>
+<pre><code>[root@centos ~]# su - postgres 
+#(或su postgres)
+#切换用户，执行后提示符会变为 &#39;-bash-4.2$&#39;
+bash-4.2$ psql --version
+ psql (PostgreSQL) 9.6.4
+</code></pre>
+<p>登录数据库，执行后提示符变为 ‘postgres&#x3D;#’</p>
+<pre><code>bash-4.2$ psql -U postgres
+#设置postgres用户密码
+postgres=# ALTER USER postgres WITH PASSWORD &#39;123456&#39;;
+#创建gitlab用户
+postgres=# CREATE USER gitlab SUPERUSER PASSWORD &#39;gitlab&#39;;
+#查看现有用户
+postgres=# \du
+postgres-# CREATE DATABASE gitlabhq_production;
+ CREATE DATABASE
+#退出数据库
+postgres=# \q
+</code></pre>
+<p>在root用户下登录:</p>
+<pre><code>[root@centos ~]# sudo psql -U gitlab -h 127.0.0.1 -d gitlabhq_production
+ gitlabhq_production=#
+</code></pre>
+<p>5.安装Git</p>
+<pre><code>[root@centos ~]# yum -y install git
+</code></pre>
+<p>6.安装Redis</p>
+<p>①.到redis官网下载最新稳定版(<a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io</a>),</p>
+<pre><code>yum install gcc tcl -y
+curl -O http://download.redis.io/releases/redis-4.0.9.tar.gz
+tar -zxvf redis-4.0.9.tar.gz
+cd redis-4.0.9
+make
+mkdir /usr/local/redis
+# 进入src目录安装
+cd src &amp;&amp; make PREFIX=/usr/local/redis install
+</code></pre>
+<p>②. 添加全局配置</p>
+<pre><code>vim ~/.bash_profile
+
+REDIS_HOME=/usr/local/redis
+PATH=$PATH:$REDIS_HOME:/bin
+export PATH REDIS_HOME
+
+source ~/.bash_profile
+
+#测试
+redis-server --help
+</code></pre>
+<p>③.添加后台daemon</p>
+<pre><code>cd ~/redis-4.0.9/utils
+./install_server.sh
+# 默认配置
+Config file    : /etc/redis/6379.conf
+Log file       : /var/log/redis_6379.log
+Data dir       : /var/lib/redis/6379
+Executable     : /usr/local/redis/bin/redis-server
+Cli Executable : /usr/local/redis/bin/redis-cli
+
+默认redis 服务名称为redis_6379(可以在cd /etc/init.d内查看或更改)
+</code></pre>
+<p>若想更改为redisd作为服务名</p>
+<pre><code>cd /etc/init.d
+mv redis_6379 redisd
+chkconfig --add redisd
+</code></pre>
+<p>④. 启动</p>
+<pre><code>systemctl status redis_6379.service
+ss -tanl
+</code></pre>
+<p>⑤. 远程访问及ip限制</p>
+<pre><code>vim /etc/redis/6379.conf
+
+#protected-mode yes改为
+protected-mode no
+
+# 注释掉, 如下
+#bind 127.0.0.1
+</code></pre>
+<p>限制ip访问需要之后在研究下，并不是填上要访问的ip就是允许此ip访问，应该是填上可以访问的本机网卡ip</p>
+<p>6.安装Gitlab</p>
+<p>①.在 CentOS 系统上，下面的命令将会打开系统防火墙 HTTP 和 SSH 的访问。</p>
+<pre><code>sudo yum install -y curl policycoreutils-python openssh-server
+</code></pre>
+<pre><code>sudo systemctl start sshd
+sudo firewall-cmd --permanent --add-service=http
+sudo systemctl reload firewalld
+</code></pre>
+<p>安装 Postfix 发送通知邮件, 如果想使用其他邮件系统可跳过此步骤(Sendmail 或者 配置一个自定义的 SMTP 服务,<a target="_blank" rel="noopener" href="https://docs.gitlab.com/omnibus/settings/smtp.html">https://docs.gitlab.com/omnibus/settings/smtp.html</a>)</p>
+<pre><code>sudo yum install postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+</code></pre>
+<p>②.添加 GitLab 镜像源并安装,EXTERNAL_URL 为gitlab的访问域名</p>
+<pre><code># 这是官方的yum源，安装速度会比较慢
+[root@centos ~]# curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+# 可以使用国内源，修改如下文件即可：
+vim /etc/yum.repos.d/gitlab_gitlab-ce.repo
+
+[gitlab-ce]
+name=gitlab-ce
+baseurl=http://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7
+repo_gpgcheck=0
+gpgcheck=0
+enabled=1
+gpgkey=https://packages.gitlab.com/gpg.key
+
+#然后执行：
+[root@centos ~]# sudo EXTERNAL_URL=&quot;http://gitlab.example.com&quot; yum install -y gitlab-ce
+
+#修改配置
+[root@centos ~]# vim /etc/gitlab/gitlab.rb
+</code></pre>
+<p>​<br>③.需要修改的配置<br>​<br>#13 项目中显示的gitlab地址<br>external_url ‘<a target="_blank" rel="noopener" href="http://gitlab.example.com&/#39;">http://gitlab.example.com&#39;</a></p>
+<pre><code>#401 使用非集成的postgresql
+gitlab_rails[&#39;db_adapter&#39;] = &quot;postgresql&quot;
+gitlab_rails[&#39;db_encoding&#39;] = &quot;utf8&quot;
+#gitlab_rails[&#39;db_encoding&#39;] = &quot;unicode
+#gitlab_rails[&#39;db_collation&#39;] = nil
+# gitlab_rails[&#39;db_database&#39;] = &quot;gitlabhq_production&quot;
+# gitlab_rails[&#39;db_pool&#39;] = 10
+gitlab_rails[&#39;db_username&#39;] = &quot;gitlab&quot;
+gitlab_rails[&#39;db_password&#39;] = &quot;123456&quot;
+gitlab_rails[&#39;db_host&#39;] = &#39;127.0.0.1&#39;
+gitlab_rails[&#39;db_port&#39;] = &#39;5432&#39;
+
+#423 使用非集成的redis
+gitlab_rails[&#39;redis_host&#39;] = &quot;127.0.0.1&quot;
+gitlab_rails[&#39;redis_port&#39;] = 6379
+gitlab_rails[&#39;redis_password&#39;] = &quot;123456&quot;
+gitlab_rails[&#39;redis_database&#39;] = 1
+
+#613 设置unicorn监听端口
+unicorn[&#39;listen&#39;] = &#39;127.0.0.1&#39;
+unicorn[&#39;port&#39;] = 8087
+
+#676 是否使用集成postgresql
+postgresql[&#39;enable&#39;] = false
+
+#799 是否使用集成redis
+redis[&#39;enable&#39;] = false
+
+#878 是否使用集成nginx,即使本地安装了Nginx也建议打开集成的nginx
+nginx[&#39;enable&#39;] = true
+
+#879 集成的Nginx监听的端口,若要本地和集成的Nginx同时使用,则更改监听端口
+nginx[&#39;listen_port&#39;] = 80
+#nginx[&#39;listen_port&#39;] = 8088
+</code></pre>
+<p>④.使配置生效</p>
+<pre><code>[root@centos ~]# sudo gitlab-ctl reconfigure
+#启动gitlab
+[root@centos ~]# gitlab-ctl start
+#重启
+[root@centos ~]# gitlab-ctl restart
+#停止
+[root@centos ~]# gitlab-ctl stop
+</code></pre>
+<h4 id="二、编译安装-待补充"><a href="#二、编译安装-待补充" class="headerlink" title="二、编译安装(待补充)"></a>二、编译安装(待补充)</h4><h4 id="安装成功"><a href="#安装成功" class="headerlink" title="安装成功"></a>安装成功</h4><p>安装成功之后,访问域名或者ip,会提示更改root用户密码</p>
+<img src="/2017/08/16/devops/tools/gitlab/gitlab_change_pwd.png" class="" title="安装成功">
+
+<p>随后跳转登录,用户名为root</p>
+<h4 id="汉化"><a href="#汉化" class="headerlink" title="汉化"></a>汉化</h4><p>查看已安装gitlab的版本</p>
+<pre><code>cat /opt/gitlab/embedded/service/gitlab-rails/VERSION
+#10.7.0
+</code></pre>
+<p>获取gitlab汉化包, 进入gitlab中文社区(<a target="_blank" rel="noopener" href="https://gitlab.com/xhang/gitlab">https://gitlab.com/xhang/gitlab</a>), 找到对应版本</p>
+<pre><code>git clone https://gitlab.com/xhang/gitlab.git -b 10-7-stable-zh
+cat gitlab/VERSION
+#10.7.1
+</code></pre>
+<p>若中文版与已安装版本不同, 则可在分支中下拉，找到tag，在tag中找相应的版本,若有则在本地git库中pull</p>
+<pre><code>git checkout -b v10.7.0-zh v10.7.0-zh
+# git checkout -b branch_name(新创建的分支名称) tag_name(对应tag名称)
+</code></pre>
+<p>则可以切换到相应版本</p>
+<pre><code># 备份
+tar -zcvf ~/gitlab_bak.tar.gz /opt/gitlab/embedded/service/gitlab-rails
+# 用中文版替换
+cp ~/gitlab-git/* /opt/gitlab/embedded/service/gitlab-rails -rf
+</code></pre>
+<p>若提示如下信息,可以不用理会</p>
+<pre><code>cp: 无法以目录&quot;/opt/gitlab/gitlab-git/log&quot; 来覆盖非目录&quot;/opt/gitlab/embedded/service/gitlab-rails/log&quot;
+cp: 无法以目录&quot;/opt/gitlab/gitlab-git/tmp&quot; 来覆盖非目录&quot;/opt/gitlab/embedded/service/gitlab-rails/tmp&quot;
+</code></pre>
+<p>替换过程中可能出现覆盖确认</p>
+<pre><code>vim ~/.bashrc
+# 将 alias cp=&#39;cp -i&#39; 注释, 并重新登录  
+
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl start/restart
+</code></pre>
+<p>查看运行日志</p>
+<pre><code>tail -f /var/log/gitlab/gitlab-rails/sidekiq.log
+</code></pre>
+<h4 id="使用非集成的Nginx"><a href="#使用非集成的Nginx" class="headerlink" title="使用非集成的Nginx"></a>使用非集成的Nginx</h4><p>在Nginx中添加如下配置</p>
+<pre><code>server&#123;
+    listen 8083;
+    server_name gitlab.example.com;
+
+    location / &#123;
+        # 这个大小的设置非常重要，如果 git 版本库里面有大文件，设置的太小，文件push 会失败，根据情况调整
+        client_max_body_size 50m;
+
+        proxy_redirect off;
+        #以下确保 gitlab中项目的 url 是域名而不是 http://git，不可缺少
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # 反向代理到 gitlab 内置的 nginx
+        proxy_pass http://127.0.0.1:8088;
+        index index.html index.htm;
+    &#125;
+&#125;
+</code></pre>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/wintersun/p/3930900.html">http://www.cnblogs.com/wintersun/p/3930900.html</a><br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/install/installation.md">https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/install/installation.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.linuxidc.com/Linux/2017-11/148223.htm">https://www.linuxidc.com/Linux/2017-11/148223.htm</a>  &#x2F;&#x2F;汉化</p>
+<ul>
+<li>其他搜索未记录</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>flyonsnow
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/" title="在Centos7上安装GitLab">https://flyonsnow.wenxuezheng.com/2017/08/16/devops/tools/gitlab/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/version-control/" rel="tag"># version control</a>
+              <a href="/tags/devops/" rel="tag"># devops</a>
+              <a href="/tags/gitlab/" rel="tag"># gitlab</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/15/hello-world/" rel="next" title="Hello World">
+      Hello World <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%A6%81%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">配置要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E7%BB%84%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">依赖组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">安装方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81Omnibus%E5%8C%85%E5%AE%89%E8%A3%85%EF%BC%88%E5%AE%89%E8%A3%85%E8%B5%B7%E6%9D%A5%E6%9B%B4%E5%BF%AB%E3%80%81%E6%9B%B4%E5%AE%B9%E6%98%93%E5%8D%87%E7%BA%A7%E7%89%88%E6%9C%AC%EF%BC%8C%E8%80%8C%E4%B8%94%E5%8C%85%E5%90%AB%E4%BA%86%E5%85%B6%E4%BB%96%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F%E6%89%80%E6%B2%A1%E6%9C%89%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E5%8A%9F%E8%83%BD%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">一、Omnibus包安装（安装起来更快、更容易升级版本，而且包含了其他安装方式所没有的可靠性功能）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-%E5%BE%85%E8%A1%A5%E5%85%85"><span class="nav-number">3.2.</span> <span class="nav-text">二、编译安装(待补充)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F"><span class="nav-number">3.3.</span> <span class="nav-text">安装成功</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B1%89%E5%8C%96"><span class="nav-number">3.4.</span> <span class="nav-text">汉化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%9D%9E%E9%9B%86%E6%88%90%E7%9A%84Nginx"><span class="nav-number">3.5.</span> <span class="nav-text">使用非集成的Nginx</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">3.6.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="flyonsnow"
+      src="/images/my-avatar.jpg">
+  <p class="site-author-name" itemprop="name">flyonsnow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-07 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">flyonsnow</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="Symbols count total">9k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">8 mins.</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
