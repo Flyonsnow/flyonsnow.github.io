@@ -107,3 +107,12 @@ deploy:
   brance: 'develop'
   repository: 'git@github.com:Flyonsnow/flyonsnow.github.io.git'
   
+symbols_count_time:
+  symbols: true       # 文章字数统计
+  time: true          # 文章阅读时长
+  total_symbols: true # 站点总字数统计
+  total_time: true    # 站点总阅读时长
+  exclude_codeblock: false # 排除代码字数统计
+  awl: 4
+  wpm: 275
+  suffix: "mins."
